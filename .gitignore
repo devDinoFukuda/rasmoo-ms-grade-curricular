@@ -1,0 +1,9 @@
+# Ajustes efetuados para deixar arquivos ocultos no GitHub, pois teremos apenas deixar visivel em nosso repositório, o src e o pom (Maven)
+
+.idea
+.gitignore
+HELP.md
+grade-curricular.iml
+mvnw
+mvnw.cmd
+target
