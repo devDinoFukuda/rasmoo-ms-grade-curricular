@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-GradeCurricularApplication<grade-curricular>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "console": "internalConsole",
+      "mainClass": "com.rasmoo.cliente.escola.gradecurricular.GradeCurricularApplication",
+      "projectName": "grade-curricular",
+      "args": ""
+    }
+  ]
+}
