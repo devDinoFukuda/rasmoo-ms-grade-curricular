@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
-
 import java.io.Serializable;
 
 import javax.persistence.*;
@@ -19,6 +18,8 @@ import javax.persistence.*;
 //Utilizar o Lombok p/ criaćão de Getters e Setters
 public class MateriaEntity implements Serializable {
 
+    
+    private static final long serialVersionUID = -3604227664897196996L;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Id

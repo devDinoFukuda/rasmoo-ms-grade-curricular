@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.rasmoo.cliente.escola.gradecurricular.dto.MateriaDto;
 import com.rasmoo.cliente.escola.gradecurricular.entity.MateriaEntity;
 import com.rasmoo.cliente.escola.gradecurricular.exceptions.MateriaException;
 import com.rasmoo.cliente.escola.gradecurricular.repositories.IMateriaRepository;
+
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,10 +24,12 @@ public class MateriaService implements IMateriaService {
 
 
   @Override
-  public List<MateriaEntity> listar() {
+  public List<MateriaDto> listar() {
     try {
-
-      return this.materiaRepository.findAll();
+      ModelMapper mapper = new ModelMapper();
+      return mapper.map(this.materiaRepository.findAll(),
+      new TypeToken<List<MateriaDto>>() {}.getType() 
+      );
       
     } catch (Exception e) {
       
@@ -31,17 +37,17 @@ public class MateriaService implements IMateriaService {
 
     }
     
-    
   }
 
   @Override
-  public MateriaEntity consultar(Long id) {
+  public MateriaDto consultar(Long id) {
     
     try {
 
+      ModelMapper mapper = new ModelMapper();
       Optional<MateriaEntity> materiaOptional = this.materiaRepository.findById(id);
       if (materiaOptional.isPresent()) {
-        return materiaOptional.get();
+        return mapper.map(materiaOptional.get(), MateriaDto.class);
 
       } else {
         throw new MateriaException("Matéria não encontrada", 
@@ -57,9 +63,11 @@ public class MateriaService implements IMateriaService {
       
     
   @Override
-  public String cadastrar(MateriaEntity materia) {
+  public String cadastrar(MateriaDto materia) {
     try {
-      this.materiaRepository.save(materia);
+      ModelMapper mapper = new ModelMapper();
+      MateriaEntity materiaEntity = mapper.map(materia, MateriaEntity.class);
+      this.materiaRepository.save(materiaEntity);
       return ("Matéria cadastrada com sucesso!");
     } catch (Exception e) {
       return ("Desculpe, não foi possivel criar matéria.");
@@ -68,28 +76,28 @@ public class MateriaService implements IMateriaService {
   }
 
   @Override
-  public String atualizar(MateriaEntity materia) {
+  public String atualizar(MateriaDto materia) {
     try {
-  
+      Optional<MateriaEntity> materiaOptional = this.materiaRepository.findById(materia.getId());
+
+      if(materiaOptional.isPresent()) {
+        ModelMapper mapper = new ModelMapper();
         //buscando materia para atualizar
-      MateriaEntity materiaEntityAtualizada = this.consultar(materia.getId());
+        MateriaEntity materiaEntityAtualizada = mapper.map(materia, MateriaEntity.class);
 
-      //atualizar todos os valores:
-      materiaEntityAtualizada.setNome(materia.getNome());
-      materiaEntityAtualizada.setCodigo(materia.getCodigo());
-      materiaEntityAtualizada.setFrequencia(materia.getFrequencia());
-      materiaEntityAtualizada.setHoras(materia.getHoras());
-
-      //salvando alterações
+       //salvando alterações
       this.materiaRepository.save(materiaEntityAtualizada);
 
       return ("Alterações efetuadas com sucesso");
- 
+   
+      }
+  
   } catch (MateriaException mException) {
     throw mException;
   } catch (Exception eException) {
     throw eException;
   }
+    return null;
 }
 
   @Override
