@@ -34,8 +34,8 @@ public class  MateriaController {
 
     @PostMapping
     public ResponseEntity<String> cadastrarMateria(@RequestBody MateriaEntity materia) {
-    
-        return ResponseEntity.status(HttpStatus.OK).body(this.materiaService.cadastrar(materia));
+        //CREATED gera o status 201: created
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.materiaService.cadastrar(materia));
     
     }
 

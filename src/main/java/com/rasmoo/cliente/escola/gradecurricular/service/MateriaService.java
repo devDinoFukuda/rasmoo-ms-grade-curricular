@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Optional;
 
 import com.rasmoo.cliente.escola.gradecurricular.entity.MateriaEntity;
+import com.rasmoo.cliente.escola.gradecurricular.exceptions.MateriaException;
 import com.rasmoo.cliente.escola.gradecurricular.repositories.IMateriaRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -40,17 +42,20 @@ public class MateriaService implements IMateriaService {
       Optional<MateriaEntity> materiaOptional = this.materiaRepository.findById(id);
       if (materiaOptional.isPresent()) {
         return materiaOptional.get();
+
       } else {
-        return null;
+        throw new MateriaException("Matéria não encontrada", 
+        HttpStatus.NOT_FOUND);
+      } 
+      } catch (MateriaException mException) {
+        throw mException;
+      } catch (Exception e) {
+        throw new MateriaException("Erro interno inesperado, contate o suporte", 
+        HttpStatus.INTERNAL_SERVER_ERROR);
       }
-      
-    } catch (Exception e) {
-      return null;
     }
-
-
-  }
-
+      
+    
   @Override
   public String cadastrar(MateriaEntity materia) {
     try {
@@ -65,9 +70,9 @@ public class MateriaService implements IMateriaService {
   @Override
   public String atualizar(MateriaEntity materia) {
     try {
-      //buscando materia para atualizar
-      MateriaEntity materiaEntityAtualizada = this.materiaRepository
-      .findById(materia.getId()).get();
+  
+        //buscando materia para atualizar
+      MateriaEntity materiaEntityAtualizada = this.consultar(materia.getId());
 
       //atualizar todos os valores:
       materiaEntityAtualizada.setNome(materia.getNome());
@@ -79,22 +84,26 @@ public class MateriaService implements IMateriaService {
       this.materiaRepository.save(materiaEntityAtualizada);
 
       return ("Alterações efetuadas com sucesso");
-
-  } catch (Exception e) {
-
-    return ("Desculpe, não foi possivel efetuar alterações");
+ 
+  } catch (MateriaException mException) {
+    throw mException;
+  } catch (Exception eException) {
+    throw eException;
   }
 }
 
   @Override
   public String excluir(Long id) {
     try {
+      this.consultar(id);
       this.materiaRepository.deleteById(id);
       return ("Matéria excluida com Sucesso!");
-  } catch (Exception e) {
-      return ("Não foi possivel deletar a Matéria");
+  } catch (MateriaException mException) {
+    throw mException;
+  } catch (Exception eException) {
+    throw eException;
   }
-  }
+}
 
  
 
